@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>动动脑：擦窗户</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#3B2A1A;text-decoration:none}a:hover{color:#5C3D14}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FFF7E8; color: #3B2A1A; font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif; display: flex; flex-direction: column; gap: 14px; padding: 16px">
+  <div style="display: flex; align-items: center; gap: 12px">
+    <a href="Main.dc.html" aria-label="返回首页" style="width: 52px; height: 52px; border-radius: 26px; background: #FFFFFF; box-shadow: 0 4px 12px rgba(122,78,18,0.15); display: flex; align-items: center; justify-content: center">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3B2A1A" stroke-width="2.4" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+    </a>
+    <div style="font-size: 24px; font-weight: 800">动动脑 · 擦窗户</div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 20px; background: #3B2A1A; color: #FFFFFF">
+    <div style="width: 52px; height: 52px; flex-shrink: 0; border-radius: 26px; border: 3px solid #FFFFFF; background: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: #C42A23">姥</div>
+    <div style="font-size: 20px; line-height: 1.4; color: #FFFFFF">{{tip}}</div>
+  </div>
+
+  <div style="flex: 1; border-radius: 22px; border: 3px solid #FFFFFF; box-shadow: 0 6px 16px rgba(122,78,18,0.18); background: {{skyBg}}; display: flex; align-items: center; justify-content: center">
+    <div style="width: 290px; height: 350px; box-sizing: border-box; border: 10px solid #FFFFFF; border-radius: 10px; background: {{glassBg}}; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 14px">
+      <sc-for list="{{drops}}" as="d" hint-placeholder-count="9">
+        <div style="display: flex; align-items: center; justify-content: center">
+          <sc-if value="{{d.wet}}" hint-placeholder-val="{{ true }}">
+            <button aria-label="擦掉雨点" onClick="{{d.wipe}}" style="width: 64px; height: 64px; border: none; border-radius: 32px; background: rgba(255,255,255,.35); display: flex; align-items: center; justify-content: center">
+              <svg width="30" height="38" viewBox="0 0 24 30" aria-hidden="true"><path d="M12 2C8 9 4 14 4 19a8 8 0 0 0 16 0c0-5-4-10-8-17z" fill="#FFFFFF"></path></svg>
+            </button>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{done}}" hint-placeholder-val="{{ false }}">
+    <a href="Code.dc.html" style="height: 64px; border-radius: 32px; background: #FFC93C; color: #2B1D12; font-size: 21px; font-weight: 700; display: flex; align-items: center; justify-content: center">天晴了！看快乐密码</a>
+  </sc-if>
+  <sc-if value="{{notDone}}" hint-placeholder-val="{{ true }}">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <div style="font-size: 20px; color: #5C3D14">还剩 <span style="font-size: 32px; font-weight: 800; color: #C42A23">{{left}}</span> 个雨点</div>
+      <button onClick="{{reset}}" style="height: 56px; padding: 0 22px; border-radius: 28px; border: 2px solid #D9C6A5; background: transparent; color: #3B2A1A; font-family: inherit; font-size: 18px; font-weight: 700">重新来</button>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { wet: [true, false, true, true, true, false, false, true, true] }; }
+  renderVals() {
+    var self = this, wet = this.state.wet;
+    var left = wet.filter(function (w) { return w; }).length;
+    var done = left === 0;
+    return {
+      drops: wet.map(function (w, i) {
+        return { wet: w, wipe: function () { var n = wet.slice(); n[i] = false; self.setState({ wet: n }); } };
+      }),
+      left: left,
+      done: done,
+      notDone: !done,
+      tip: done ? '天晴了！擦得真干净！' : '用手点一点，把窗户上的雨点擦掉',
+      skyBg: done ? '#9FC3E3' : '#8F96A3',
+      glassBg: done ? '#CFE3F3' : '#A9B0BC',
+      reset: function () { self.setState({ wet: [true, false, true, true, true, false, false, true, true] }); }
+    };
+  }
+}
+</script>
+</body>
+</html>
